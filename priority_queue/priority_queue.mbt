@@ -16,7 +16,7 @@
 /// 
 /// # Example
 /// ```
-/// let queue : PriorityQueue[Int] = PriorityQueue::new()
+/// let queue : @priority_queue.T[Int] = @priority_queue.new()
 /// ```
 pub fn T::new[A : Compare]() -> T[A] {
   { len: 0, top: Nil }
@@ -26,7 +26,7 @@ pub fn T::new[A : Compare]() -> T[A] {
 /// 
 /// # Example
 /// ```
-/// let queue = of([1, 2, 3, 4, 5])
+/// let queue : @priority_queue.T[Int] = @priority_queue.from_array([1, 3, 6, 4, 5])
 /// ```
 pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
   // CR: bad formatting  
@@ -52,18 +52,27 @@ fn copy_node[A](x : Node[A]) -> Node[A] {
   }
 }
 
-/// Return a copy of the queue.
+/// Returns a copy of the priority queue.
 /// 
 /// # Example
 /// ```
-/// let queue : PriorityQueue[Int] = of([1, 2, 3, 4])
-/// let queue2 : PriorityQueue[Int] = PriorityQueue.copy()
+/// let queue : @priority_queue.T[Int] = @priority_queue.of([1, 2, 3, 4])
+/// let queue2 : @priority_queue.T[Int] = queue.copy()
 /// ```
 pub fn copy[A](self : T[A]) -> T[A] {
   let new_que : T[A] = { len: self.len, top: copy_node(self.top) }
   new_que
 }
 
+/// Converts the priority queue into a sorted array.
+/// 
+/// The elements are extracted from the queue in sorted order and placed into an array.
+/// 
+/// # Example
+/// ```
+/// let queue : @priority_queue.T[Int] = @priority_queue.of([1, 2, 3, 4])
+/// let array = queue.to_array()
+/// ```
 pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   let arr : Array[A] = []
   fn go(x : Node[A]) {
@@ -82,6 +91,15 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   arr
 }
 
+/// Returns an iterator over the elements of the priority queue.
+/// 
+/// # Example
+/// ```
+/// let queue : @priority_queue.T[Int] = @priority_queue.of([1, 2, 3, 4])
+/// for i in queue.iter() {
+///   println(i)
+/// }
+/// ```
 pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
@@ -97,6 +115,12 @@ pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   )
 }
 
+/// Creates a new priority queue from an iterator.
+///
+/// # Example
+/// ```
+/// let queue : @priority_queue.T[Int] = @priority_queue.from_iter([1, 2, 3].iter())
+/// ```
 pub fn T::from_iter[K : Compare](iter : Iter[K]) -> T[K] {
   let s = T::new()
   iter.each(fn(e) { s.push(e) })
@@ -143,7 +167,7 @@ pub fn length[A](self : T[A]) -> Int {
 /// 
 /// # Example
 /// ```
-/// let queue = of([1, 2, 3, 4])
+/// let queue : @priority_queue.T[Int] = @priority_queue.of([1, 2, 3, 4])
 /// let first = queue.unsafe_pop() // 4
 /// ```
 /// @alert unsafe "Panic if the queue is empty."
@@ -164,7 +188,7 @@ pub fn pop_exn[A : Compare](self : T[A]) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let queue = of([1, 2, 3, 4])
+/// let queue : @priority_queue.T[Int] = @priority_queue.of([1, 2, 3, 4])
 /// let first = queue.pop() // Some(4)
 /// ```
 pub fn pop[A : Compare](self : T[A]) -> A? {
@@ -183,7 +207,7 @@ pub fn pop[A : Compare](self : T[A]) -> A? {
 /// 
 /// # Example
 /// ```
-/// let queue : PriorityQueue[Int] = PriorityQueue::new()
+/// let queue : @priority_queue.T[Int] = Priority::new()
 /// queue.add(1)
 /// ```
 pub fn push[A : Compare](self : T[A], value : A) -> Unit {
@@ -195,7 +219,7 @@ pub fn push[A : Compare](self : T[A], value : A) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let queue : PriorityQueue[Int] = of([1, 2, 3, 4])
+/// let queue : @priority_queue.T[Int] = Priority::of([1, 2, 3, 4])
 /// let first = queue.peek() // Some(4)
 /// ```
 pub fn peek[A](self : T[A]) -> A? {
@@ -205,11 +229,11 @@ pub fn peek[A](self : T[A]) -> A? {
   }
 }
 
-/// Clears the queue.
+/// Clears the priority queue.
 /// 
 /// # Example
 /// ```
-/// let queue = of([1, 2, 3, 4])
+/// let queue : @priority_queue.T[Int] = Priority::of([1, 2, 3, 4])
 /// queue.clear()
 /// ```
 pub fn clear[A](self : T[A]) -> Unit {
@@ -221,13 +245,19 @@ pub fn clear[A](self : T[A]) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let queue : Priorityt[Int] = Priority::new()
+/// let queue : @priority_queue.T[Int] = Priority::new()
 /// let is_empty = queue.is_empty() // true
 /// ```
 pub fn is_empty[A](self : T[A]) -> Bool {
   self.len == 0
 }
 
+/// Creates a new priority queue from a FixedArray.
+/// 
+/// # Example
+/// ```
+/// let queue : @priority_queue.T[Int] = @priority_queue.of([1, 3, 6, 4, 5])
+/// ```
 pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
   // CR: bad formatting  
   let len = arr.length()
@@ -256,6 +286,13 @@ pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
   logger.write_char(')')
 }
 
+/// Returns a string representation of the priority queue.
+/// 
+/// # Example
+/// ```
+/// let queue : @priority_queue.T[Int] = @priority_queue.of([1, 2, 3, 4])
+/// let str = queue.to_string()
+/// ```
 pub fn to_string[A : Show + Compare](self : T[A]) -> String {
   Show::to_string(self)
 }
